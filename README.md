@@ -34,6 +34,3 @@ Actions 的 `Run workflow` 可以输入 `v0.4.0` 或 `0.4.0`。
 
 然后重新运行 Actions，即可在同一个上游 TaoSync 版本下生成新的 FPK。
 
-## 不要上传
-
-`.build/` 和 `dist/` 是构建过程中自动生成的临时目录，已经写入 `.gitignore`，不要上传到仓库。
