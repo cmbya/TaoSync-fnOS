@@ -9,15 +9,6 @@ TaoSync 的 fnOS x86 原生自动构建仓库模板。
 - 自动检查：每天一次
 - 发布方式：GitHub Pre-release
 
-## 第一次使用
-
-1. 新建一个空仓库，建议名称：`TaoSync-fnOS`。
-2. 把本模板根目录里的文件上传到新仓库。
-3. `.github` 如果网页上传时被隐藏：使用 **Add file → Create new file**，文件名填写：
-   `.github/workflows/build-taosync-fpk.yml`
-4. 仓库进入 **Settings → Actions → General → Workflow permissions**，选择 **Read and write permissions** 并保存。
-5. 进入 **Actions → Build TaoSync fnOS FPK → Run workflow**，版本留空即可自动使用上游最新正式 Release。
-
 ## 自动更新逻辑
 
 每天检查 `dr34m-cn/taosync` 的最新正式 Release。若对应 `fnos-vX.Y.Z-native1` Release 已存在就跳过；不存在则验证上游 Release 中有 `linux-StaticX-amd64.zip`，然后生成 FPK，并自动创建 Pre-release。
