@@ -11,8 +11,6 @@ if [[ "$TAG" != v* ]]; then
 fi
 VERSION="${TAG#v}"
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PACK_REV="$(tr -d '[:space:]' < "$ROOT/PACK_REV")"
-[[ -n "$PACK_REV" ]] || { echo "PACK_REV 为空" >&2; exit 2; }
 
 WORK="$ROOT/.build"
 PKG="$WORK/package"
@@ -22,16 +20,16 @@ mkdir -p "$WORK" "$DIST"
 cp -a "$ROOT/package-template" "$PKG"
 
 # 1) 更新 fnOS manifest 版本与说明。
-python3 - "$PKG/manifest" "$VERSION" "$PACK_REV" "$TAG" <<'PY'
+python3 - "$PKG/manifest" "$VERSION" "$TAG" <<'PY'
 from pathlib import Path
 import sys
 p = Path(sys.argv[1])
-version, pack_rev, tag = sys.argv[2:]
+version, tag = sys.argv[2:]
 lines = p.read_text(encoding='utf-8').splitlines()
 replace = {
-    'version': f'{version}-{pack_rev}',
+    'version': f'{version}',
     'desc': f'TaoSync {version} x86 原生飞牛版。直接运行官方 Linux StaticX amd64，不使用 Docker；支持授权目录访问及多种本地/远程存储同步。',
-    'changelog': f'自动跟随上游 TaoSync {tag} 构建；fnOS 原生 x86 封装 {pack_rev}。覆盖升级保留数据库、配置和任务数据。',
+    'changelog': f'自动跟随上游 TaoSync {tag} 构建；fnOS 原生 x86 封装。覆盖升级保留数据库、配置和任务数据。',
     'checksum': '',
 }
 out=[]; seen=set()
@@ -87,11 +85,11 @@ for p in [r"$PKG/config/privilege", r"$PKG/config/resource", r"$PKG/wizard/confi
 PY
 grep -q '^platform=x86$' "$PKG/manifest"
 grep -q '^service_port=8023$' "$PKG/manifest"
-grep -q "^version=${VERSION}-${PACK_REV}$" "$PKG/manifest"
+grep -q "^version=${VERSION}$" "$PKG/manifest"
 grep -q "^checksum=${APP_MD5}$" "$PKG/manifest"
 
 # 5) 生成 FPK。
-OUT="$DIST/TaoSync_${VERSION}_${PACK_REV}_fnOS_x86.fpk"
+OUT="$DIST/TaoSync_${VERSION}_fnOS_x86.fpk"
 tar -czf "$OUT" -C "$PKG" .
 
 # 6) 解包复核 app.tgz MD5 与 manifest.checksum。
